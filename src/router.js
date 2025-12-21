@@ -32,6 +32,21 @@ const router = createRouter({
               path: 'list',
               name: 'list',
               component:()=> import('./components/views/book/list/BookList.vue')
+            },
+            {
+              path: 'addBook',
+              name: 'addBook',
+              component:()=> import('./components/views/book/add/AddBook.vue')
+            },
+            {
+              path: 'category',
+              name: 'category',
+              component:()=> import('./components/views/book/category/BookCategory.vue')
+            },
+            {
+              path: 'copy',
+              name: 'copy',
+              component:()=> import('./components/views/book/copy/BookCopyList.vue')
             }
           ]
         }

@@ -7,10 +7,10 @@
                     <el-form-item>
                         <el-select v-model="select" placeholder="Select" style="width: 115px">
                             <el-option label="书名" value="1" />
-                            <el-option label="ISBN" value="2" />
-                            <el-option label="作者" value="3" />
-                            <el-option label="出版社" value="4" />
-                            <el-option label="书籍ID" value="5" />
+                            <el-option label="书籍ID" value="2" />
+                            <el-option label="馆藏ID" value="3" />
+                            <el-option label="馆藏位置" value="4" />
+                            <el-option label="在馆状态" value="5" />
                         </el-select>
                         <el-checkbox v-model="isPrecise" label="精确查找" style="margin-left: 20px;"></el-checkbox>
                     </el-form-item>
@@ -34,13 +34,12 @@
                 <el-button type="warning" @click="$router.push('addBook')"><el-icon>
                         <Plus />
                     </el-icon>添加新书</el-button>
-                <el-upload v-model:file-list="fileList" class="upload-demo"
-                    :on-preview="handlePreview":on-remove="handleRemove" :show-file-list="false"
-                    :before-remove="beforeRemove" :http-request="uploadExcel"
-                    >
+                <el-upload v-model:file-list="fileList" class="upload-demo" :on-preview="handlePreview"
+                    :on-remove="handleRemove" :show-file-list="false" :before-remove="beforeRemove"
+                    :http-request="uploadExcel">
                     <el-button type="warning"><el-icon>
-                        <FolderAdd />
-                    </el-icon>批量录入</el-button>
+                            <FolderAdd />
+                        </el-icon>批量录入</el-button>
                 </el-upload>
                 <el-button type="warning" @click="handleBatchDelete"><el-icon>
                         <Delete />
@@ -50,21 +49,18 @@
 
         <!--这里是书籍列表-->
         <div class="content">
-            <el-table size="large" border :data="bookList" style="width: 100%;" cell-class-name="table-center"
+            <el-table size="large" border :data="copyList" style="width: 100%;" cell-class-name="table-center"
                 @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55">
                 </el-table-column>
-                <el-table-column prop="bookId" label="ID" width="60"></el-table-column>
+                <el-table-column prop="copyId" label="馆藏ID" width="90"></el-table-column>
+                <el-table-column prop="bookId" label="书籍ID" width="90"></el-table-column>
                 <el-table-column prop="isbn" label="书籍ISBN" width="180"></el-table-column>
                 <el-table-column prop="title" label="书名" width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="author" label="作者" width="100" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="publisher" label="出版社" width="100" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="publishDate" label="出版日期"></el-table-column>
-                <el-table-column prop="price" label="价格" width="80"></el-table-column>
-                <el-table-column prop="summary" label="书籍简介" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="categoryId" label="分类ID"></el-table-column>
-                <el-table-column prop="totalCopies" label="馆藏总数"></el-table-column>
-                <el-table-column prop="availableCopies" label="可借出数量"></el-table-column>
+                <el-table-column prop="barcode" label="馆藏编号" width="100" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="location" label="馆藏位置" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="status" label="在馆状态"></el-table-column>
+                <el-table-column prop="purchaseDate" label="采购日期"></el-table-column>
                 <el-table-column label="操作" width="200">
                     <template #default="scope">
                         <el-button size="small" type="primary" @click="handleEdit(scope.row)"><el-icon>
@@ -83,11 +79,6 @@
 
         <!--这里是隐藏的编辑界面-->
         <el-dialog v-model="editDialogVisible" title="编辑书籍" width="50%">
-            <router-link to="/" style="text-decoration: none;color: red;">
-                <p class="dislog-footer" style="margin-left: 28px;margin-bottom: 10px;">
-                    点我为本书籍添加具体馆藏副本
-                </p>
-            </router-link>
             <el-form :model="editForm" label-width="100px">
                 <el-form-item label="书籍ISBN">
                     <el-input v-model="editForm.isbn" placeholder="请输入书籍ISBN"></el-input>
@@ -124,10 +115,12 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getBooksList, searchBook, deleteSelectBook, deleteSelectBookList, editSelectBook,addBatchBook } from '@/api/modules/books'
+import { editSelectBook, addBatchBook } from '@/api/modules/books'
+import { getBookCopy, searchBookCopy ,deleteSelectCopy,deleteSelectCopyList} from '@/api/modules/bookCopy'
 import Pagination from '@/components/utils/pagination/Pagination.vue'
 import dayjs from 'dayjs'
 const bookList = ref([]) // 定义书籍列表，用于从后端获取数据
+const copyList = ref([]) // 定义副本列表，用于从后端获取到书籍的副本信息
 const pageSize = ref(10) // 定义每页显示的数量
 const total = ref(0) // 定义总共有多少条数据
 const isSearch = ref(false)
@@ -137,20 +130,21 @@ const paginationForm = ref({
     pageSize
 })
 
-// 获取书籍列表
-const getBooks = () => {
-    getBooksList(paginationForm.value).then((res) => {
-        // console.log('书籍数据', res)
-        bookList.value = res.data || []
-        total.value = res.paginationVO.total
-    }).catch(err => {
-        console.error("获取书籍信息失败", err)
+// 获取书籍副本列表
+const getCopies = () => {
+    getBookCopy(paginationForm.value).then(res => {
+        if (res.code == 0) {
+            copyList.value = res.data
+            total.value = res.paginationVO.total
+        } else {
+            ElMessage.error(res.msg || "网络错误")
+        }
     })
 }
-onMounted(() => {
-    getBooks()
-})
 
+onMounted(() => {
+    getCopies()
+})
 
 // 分页功能
 
@@ -159,7 +153,7 @@ function handleCurrentChange(val) {
     // console.log('当前页码', val)
     paginationForm.value.currentPage = val
     if (isSearch.value == false) {
-        getBooks(paginationForm.value)
+        getCopies(paginationForm.value)
     } else {
         getSearchList(searchForm.value, paginationForm.value)
     }
@@ -171,7 +165,7 @@ function handleChangePageSize(val) {
     console.log('每页显示条数', val)
     paginationForm.value.pageSize = val
     if (isSearch.value == false) {
-        getBooks(paginationForm.value)
+        getCopies(paginationForm.value)
     } else {
         getSearchList(searchForm.value, paginationForm.value)
     }
@@ -182,10 +176,10 @@ function handleChangePageSize(val) {
 const select = ref('1') // 定义select用来控制选择搜索选项
 const selectList = ref({
     1: '书名',
-    2: 'ISBN',
-    3: '作者',
-    4: '出版社',
-    5: '书籍ID'
+    2: '书籍ID',
+    3: '馆藏ID',
+    4: '馆藏位置',
+    5: '馆藏状态'
 })
 const selectName = computed(() => {  // 计算属性，从selectList中根据select获取到对应的选项文本
     return selectList.value[select.value]
@@ -217,15 +211,16 @@ const searchForm = ref({
     publisherEndTime: publisherEndTime
 })
 const getSearchList = () => {
-    searchBook(searchForm.value, paginationForm.value).then((res) => {
+    searchBookCopy(searchForm.value, paginationForm.value).then((res) => {
         console.log('搜索结果', res.data)
         console.log(res.msg)
-        bookList.value = res.data || []
+        copyList.value = res.data || []
         total.value = res.paginationVO.total
     })
         .catch(err => {
             console.error("搜索书籍失败", err)
         })
+
 }
 // 点击按钮事件，上传表单获取搜索的数据
 const handleSearch = () => {
@@ -241,7 +236,7 @@ const handleSearch = () => {
 const toBack = () => {
     searchText.value = ''
     isSearch.value = false
-    getBooks()
+    getCopies()
 }
 
 // 批量删除
@@ -249,7 +244,7 @@ const toBack = () => {
 // 批量选择监听
 const selectedIds = ref([])
 const handleSelectionChange = (selection) => {
-    selectedIds.value = selection.map(item => item.bookId)  // 将勾选的id保存在数组中
+    selectedIds.value = selection.map(item => item.copyId)  // 将勾选的id保存在数组中
 }
 const handleBatchDelete = () => {
     if (selectedIds.value.length === 0) {
@@ -262,18 +257,14 @@ const handleBatchDelete = () => {
         type: 'warning'
     }).then((res) => {
         console.log(selectedIds.value)
-        deleteSelectBookList(selectedIds.value).then((res) => {
+        deleteSelectCopyList(selectedIds.value).then((res) => {
             if (res.code === 0) {
                 ElMessage.success('删除成功')
-                getBooks()
+                getCopies()
             } else {
                 ElMessage.error(res.msg || '删除失败')
             }
         })
-            .catch(err => {
-                console.error('删除失败', err)
-                ElMessage.error('删除失败')
-            })
     }).catch(err => {
         ElMessage.info('已取消删除')
     })
@@ -286,8 +277,8 @@ const handleDelete = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        console.log({ id: row.bookId })
-        deleteSelectBook({ id: row.bookId }).then(res => {
+        console.log({ id: row.copyId })
+        deleteSelectCopy({ id: row.copyId }).then(res => {
             if (res.code === 0) {
                 ElMessage.success(res.msg)
                 getBooks()
@@ -304,18 +295,18 @@ const handleDelete = (row) => {
 const uploadExcel = (options) => {
     const uploadMessage = ref()
     const formData = new FormData()
-    formData.append("file",options.file)
+    formData.append("file", options.file)
     console.log(options.file)
-        addBatchBook(formData).then(res=>{
-            if(res.code == 0){
-                getBooks()
-                ElMessage.success(res.msg)
-            }else{
-                console.log(res.msg)
-                ElMessage.error(res.msg || "导入失败")
-            }
-        })
-    
+    addBatchBook(formData).then(res => {
+        if (res.code == 0) {
+            getBooks()
+            ElMessage.success(res.msg)
+        } else {
+            console.log(res.msg)
+            ElMessage.error(res.msg || "导入失败")
+        }
+    })
+
 }
 
 // 这里是书籍信息编辑

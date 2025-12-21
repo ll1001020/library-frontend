@@ -6,7 +6,7 @@
                     <Menu :isCollapse="isCollapse"></Menu>
                 </el-aside>
             </el-col>
-            <el-col :span="isCollapse ? 23 : 21">
+            <el-col :span="isCollapse ? 23 : 21" style="border-left: 5px solid rgb(242,243,245);">
                 <el-main style=" padding: 0px; width: 100%;">
                     <Main style="width: 100%;" :isCollapse="isCollapse" @changeCollapse="changeCollapse"></Main>
                 </el-main>

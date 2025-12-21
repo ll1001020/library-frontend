@@ -105,7 +105,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
                     if(resp.data.userTypeId == "0"){
                         localStorage.setItem('adminLoginStatus', 'true')
                         localStorage.setItem('adminStartTime', nowTime.toString())
-                        router.push('/adminHome')
+                        router.push('/adminHome/index')
                     }
                 }
             })
