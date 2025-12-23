@@ -37,7 +37,7 @@
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useRouter } from 'vue-router';
-import { login } from '@/api/modules/users';
+import { login } from '@/api/modules/user';
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()

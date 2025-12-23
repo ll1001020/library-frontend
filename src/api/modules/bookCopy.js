@@ -28,3 +28,24 @@ export const deleteSelectCopyList = (data) =>
     method:"post",
     data
   })
+
+export const editSelectCopy = (data) =>
+    request({
+        url: "book-copies/editSelectCopy",
+        method: "post",
+        data
+    })
+
+export const addCopy = (data) =>
+    request({
+        url: "book-copies/addCopy",
+        method: "post",
+        data
+    })
+
+export const addBatchCopy = (data) =>
+    request({
+        url: "book-copies/addBatchCopy",
+        method: "post",
+        data
+    })

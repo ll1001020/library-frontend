@@ -29,7 +29,7 @@
                                         <h3 style="padding-left: 10px;">作者：{{ book.author }}</h3>
                                         <p style="line-height: 30px;padding: 10px;">简介：{{ book.summary }}</p>
                                         <div style="position: absolute;bottom: 0;right: 0;">
-                                            <router-link to="adminhome">
+                                            <router-link :to="{ name: 'bookCopy', query: { bookId: book.bookId } }">
                                                 <el-button>查看馆藏</el-button>
                                             </router-link>
                                         </div>

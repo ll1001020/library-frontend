@@ -34,10 +34,7 @@
                 <el-button type="warning" @click="$router.push('addBook')"><el-icon>
                         <Plus />
                     </el-icon>添加新书</el-button>
-                <el-upload v-model:file-list="fileList" class="upload-demo"
-                    :on-preview="handlePreview":on-remove="handleRemove" :show-file-list="false"
-                    :before-remove="beforeRemove" :http-request="uploadExcel"
-                    >
+                <el-upload  class="upload-demo" :http-request="uploadExcel" :show-file-list="false">
                     <el-button type="warning"><el-icon>
                         <FolderAdd />
                     </el-icon>批量录入</el-button>
@@ -89,6 +86,9 @@
                 </p>
             </router-link>
             <el-form :model="editForm" label-width="100px">
+                <el-form-item label="书籍ID">
+                    <el-input v-model="editForm.bookId" placeholder="请输入书籍ISBN" disabled></el-input>
+                </el-form-item>
                 <el-form-item label="书籍ISBN">
                     <el-input v-model="editForm.isbn" placeholder="请输入书籍ISBN"></el-input>
                 </el-form-item>

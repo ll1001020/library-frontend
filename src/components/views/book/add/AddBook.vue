@@ -120,7 +120,7 @@ function resetForm() {
 }
 
 function backProductList() {
-    router.push('list')
+    router.push('bookList')
 }
 
 </script>
