@@ -21,7 +21,7 @@
                                 <div style="display: flex; gap: 10px;min-height: 270px;">
                                     <div style="width: 30%;">
                                         <img :src="book.coverImage ? 
-                                        `/src/assets/imgs/books/${book.coverImage}` 
+                                        `/src/assets/imgs/books/${book.coverImage}`
                                         : `/src/assets/imgs/books/common/暂无图片.png`"
                                             style="max-width: 100%;" />
                                     </div>
@@ -34,7 +34,6 @@
                                             </router-link>
                                         </div>
                                     </div>
-
                                 </div>
                             </el-card>
                         </div>

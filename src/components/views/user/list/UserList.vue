@@ -49,14 +49,14 @@
                 <el-table-column type="selection" width="55">
                 </el-table-column>
                 <el-table-column prop="userId" label="用户ID" width="90"></el-table-column>
-                <el-table-column prop="username" label="用户名" width="100"></el-table-column>
+                <el-table-column prop="username" label="用户名" width="120"></el-table-column>
                 <el-table-column prop="realName" label="真名" width="90"></el-table-column>
                 <el-table-column prop="studentId" label="学号" width="130" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="phone" label="电话号码" width="130" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="borrowLimit" label="最大借阅数" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="borrowedCount" label="当前借阅数"></el-table-column>
+                <el-table-column prop="borrowCount" label="当前借阅数"></el-table-column>
                 <el-table-column prop="borrowLimitDay" label="初次借阅天数" width="130"></el-table-column>
-                <el-table-column prop="lastLoginTime" label="上次登录时间" width="130"></el-table-column>
+                <el-table-column prop="lastLoginTime" label="上次登录时间" width="180"></el-table-column>
                 <el-table-column prop="status" label="账户状态"></el-table-column>
                 <el-table-column prop="notes" label="备注"></el-table-column>
                 <el-table-column label="操作" width="200">
@@ -83,6 +83,9 @@
                 </el-form-item>
                 <el-form-item label="用户名" required>
                     <el-input v-model="editForm.username" placeholder="请输入用户名"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" required>
+                    <el-input v-model="editForm.password" placeholder="请输入密码"></el-input>
                 </el-form-item>
                 <el-form-item label="真实姓名">
                     <el-input v-model="editForm.realName" placeholder="请输入真实姓名"></el-input>
@@ -185,10 +188,11 @@ const paginationForm = ref({
     pageSize
 })
 
-// 获取书籍副本列表
+// 获取用户列表
 const getAllUser = () => {
     getUser(paginationForm.value).then(res => {
         if (res.code == 0) {
+            console.log(res.data)
             userList.value = res.data
             total.value = res.paginationVO.total
         } else {
@@ -271,7 +275,7 @@ const getSearchList = () => {
 // 点击按钮事件，上传表单获取搜索的数据
 const handleSearch = () => {
     if (!searchForm) {
-        getBooks()
+        getUser()
     }
     isSearch.value = true
     // console.log(searchForm.value)
@@ -405,6 +409,7 @@ const editDialogVisible = ref(false)
 const editForm = ref({
     userId: '',
     username: '',
+    password: '',
     realName: '',
     studentId: '',
     phone: '',
@@ -418,6 +423,10 @@ const options = [
     {
         value: '停用',
         label: '停用'
+    },
+    {
+        value: '禁用',
+        label: '禁用'
     }
 ]
 const submitEdit = () => {
@@ -444,6 +453,7 @@ const handleEdit = (row) => {
     editForm.value = {
         userId: row.userId,
         username: row.username,
+        password: '',
         realName: row.realName,
         studentId: row.studentId,
         phone: row.phone,

@@ -41,15 +41,14 @@
 </template>
 
 <script setup lang='ts'>
-import { Document, Menu as IconMenu, Location, Setting, } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
-import { getMenuBackList } from '@/api/modules/menuback'
+import { getMenuBackList } from '@/api/modules/menuBack'
 import * as Icons from '@element-plus/icons-vue'
 const handleOpen = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
+    // console.log(key, keyPath)
 }
 const handleClose = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
+    // console.log(key, keyPath)
 }
 const props = defineProps(["isCollapse"])
 

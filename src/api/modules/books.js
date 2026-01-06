@@ -63,3 +63,10 @@ export const findBookByCategoryId = (params) =>
     method:'get',
     params
   })
+
+  // 获取本月最新的书籍
+export const getNewBookList = ()=>
+  request({
+    url: 'books/getNewBookList',
+    method: 'get'
+  })

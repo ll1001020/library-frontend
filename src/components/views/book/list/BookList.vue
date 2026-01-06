@@ -349,7 +349,7 @@ const submitEdit = () => {
         })
             .catch(err => {
                 console.error('修改失败', err)
-                ElMessage.erroe('修改失败')
+                ElMessage.error('修改失败')
             })
     }).catch(() => {
         ElMessage.info('已取消修改')

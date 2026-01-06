@@ -49,3 +49,11 @@ export const addBatchCopy = (data) =>
         method: "post",
         data
     })
+
+// 获取选中书籍副本的数据
+export const getBookCopyById = (params) =>
+  request({
+    url: 'book-copies/getBookCopyById',
+    method: 'get',
+    params
+  })

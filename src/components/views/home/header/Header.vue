@@ -2,7 +2,7 @@
     <div class="layout outcolor">
         <div class="head outcolor">
             <!-- 这里是logo和登录位置 -->
-            <div class="headrow">
+            <div class="headrow" style="transform: translateZ(0);">
                 <div class="headlogo">
                     <div class="headlogin">
                         <router-link to="/login" v-if="!loginStatus">
@@ -12,12 +12,12 @@
                             </el-icon>
                         </router-link>
                         <div v-if="loginStatus" class="haveLogin">
-                            <div>{{ loginShow }}</div>
+                            <div style="font-size: small;white-space: pre-wrap;">{{ loginShow }}</div>
                             <el-icon>
                                 <Avatar />
                             </el-icon>
                             <div class="smallWindow">
-                                <div><router-link
+                                <div><router-link to="/home/personalCenter"
                                         style="font-size: small;color:rgb(54, 153, 170);text-decoration: none;">个人中心</router-link>
                                 </div>
                                 <div><router-link to="/login" @click="quitLogin()"
@@ -34,18 +34,18 @@
                 <hr />
             </div>
             <!-- 这里是菜单栏-->
-            <div class="headrow ">
+            <div class="headrow">
                 <div class="menu">
                     <ul>
                         <li v-for="(menu, index) in menuList" :key="index" @mouseenter="menuDisplay = index"
                             @mouseleave="menuDisplay = null">
-                            <router-link to="#">{{ menu.title }}</router-link>
+                            <router-link :to="{ path: menu.path || '#' }">{{ menu.title }}</router-link>
                             <div class="submenu" v-if="menuDisplay === index && menu.children">
                                 <!-- 切成 3 栏 -->
                                 <div v-for="(col, i) in Math.ceil((menu.children?.length || 0) / 3)" :key="i"
                                     style="display: flex; flex-direction: column; gap: 15px;justify-content: center;gap: 30px;position: relative;">
                                     <div v-for="(child, j) in menu.children?.slice(i * 3, i * 3 + 3)" :key="j">
-                                        <router-link to="#"
+                                        <router-link :to="{ path: child.path || '#' }"
                                             style="color: rgb(54, 153, 170);font-size: large;text-decoration: none;">{{
                                                 child.title }}</router-link>
                                     </div>
@@ -67,28 +67,42 @@
 import { ref, computed } from 'vue'
 import { onMounted } from 'vue'
 import { getMenuList } from '@/api/modules/menufront'
+import Cookies from 'js-cookie';
 
 const menuList = ref([])
 const menuDisplay = ref(null)
+const user = ref()
+const admin = ref()
+if (Cookies.get('user')) {
+    user.value = JSON.parse(Cookies.get('user'))
+}
+if (Cookies.get('admin')) {
+    admin.value = JSON.parse(Cookies.get('admin'))
+}
+const currentUser = user.value || admin.value
 const loginStatus = computed(() => {
-    if (localStorage.getItem('startTime') + 1000 * 60 > Date.now()) {
-        return localStorage.getItem('LoginStatus') === 'true'
+    //localStorage.getItem('startTime') + 1000 * 60 > Date.now()
+    if (Cookies.get('LoginStatus') === 'true') {
+        return true
+    } else {
+        return false
     }
-    return false
 })
 const loginShow = computed(() => {
-    if (localStorage.getItem('LoginStatus') === 'true') {
-        return '已登录'
+    if (Cookies.get('LoginStatus') === 'true') {
+        return currentUser.username + '\n' + '你好'
     }
     return '去登录'
 })
 function quitLogin() {
-    localStorage.removeItem('LoginStatus')
-    localStorage.removeItem('startTime')
+    Cookies.remove("LoginStatus")
+    Cookies.remove("adminStartTime")
+    Cookies.remove("admin")
+    Cookies.remove("user")
 }
 onMounted(() => {
     getMenuList().then(res => {
-        // console.log(res)
+        console.log(res.data)
         menuList.value = res.data
         console.log(res.msg)
     })
@@ -128,6 +142,7 @@ onMounted(() => {
 .headrow {
     height: 50%;
     width: 100%;
+    position: relative;
 }
 
 .headlogo {
@@ -180,15 +195,17 @@ onMounted(() => {
 }
 
 .smallWindow {
-    width: 100px;
-    height: 125%;
+    width: 80px;
+    height: 85%;
+    left: 85%;
+    top: 20%;
     position: absolute;
-    bottom: -80%;
     background-color: rgb(235, 240, 241, 0.6);
     display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 12px;
 }
 
 .haveLogin:hover .smallWindow {
@@ -234,8 +251,8 @@ onMounted(() => {
 }
 
 .submenu {
-    position: fixed;
-    top: 180px;
+    position: absolute;
+    top: 100%;
     left: 0;
     width: 100%;
     height: 220px;
@@ -245,6 +262,7 @@ onMounted(() => {
     gap: 250px;
     padding-top: 80px;
     background-color: rgb(235, 240, 241);
+    z-index: 999;
     /* border: 1px red solid; */
 }
 </style>

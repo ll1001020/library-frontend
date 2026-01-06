@@ -111,7 +111,7 @@
             </template>
         </el-dialog>
 
-        <!-- 这里是隐藏的添加副本前往窗口 -->
+        <!-- 这里是隐藏的添加副本 -->
          <el-dialog v-model="addDialogVisible" title="新增副本" width="50%">
             <el-form :model="addForm" label-width="100px">
                 <el-form-item label="书籍ID" required>
@@ -147,7 +147,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref,watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getBookCopy, searchBookCopy, deleteSelectCopy, deleteSelectCopyList, editSelectCopy,addCopy,addBatchCopy } from '@/api/modules/bookCopy'
 import Pagination from '@/components/utils/pagination/Pagination.vue'
@@ -178,6 +178,11 @@ const getCopies = () => {
 
 onMounted(() => {
     getCopies()
+    autoSearchBookId()
+})
+
+// 如果分类有传递ID过来，搜索对应ID
+const autoSearchBookId = ()=>{
     if(route.query.bookId){
         searchText.value = route.query.bookId
         select.value = "2"
@@ -185,7 +190,8 @@ onMounted(() => {
         console.log(route.query.bookId)
         getSearchList()
     }
-})
+}
+watch(()=>route.query,()=>autoSearchBookId)
 
 // 分页功能
 

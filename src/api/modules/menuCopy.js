@@ -48,3 +48,9 @@ export const deleteSelectMenuCopy = (params) =>
     params
   })
 
+// 更新前台菜单为前台副本菜单，同步数据
+export const updateFrontMenu = () =>
+  request({
+    url: 'menu-copy/updateFrontMenu',
+    method: 'get'
+  })

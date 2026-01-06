@@ -85,3 +85,11 @@ export const searchBlackUser = (data,params) =>
         data,
         params
     })
+
+// 获取当前用户所有借阅信息，根据用户ID
+export const getPersonalBorrowInfoByUserId = (params) =>
+    request({
+        url: 'users/getPersonalBorrowInfoByUserId',
+        method: 'get',
+        params
+    })

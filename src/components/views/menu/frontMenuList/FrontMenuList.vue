@@ -38,7 +38,8 @@
                 </el-table-column>
                 <el-table-column prop="menuId" label="菜单ID" width="90"></el-table-column>
                 <el-table-column prop="title" label="菜单名称" width="100"></el-table-column>
-                <el-table-column prop="parentId" label="父菜单ID" width="90"></el-table-column>
+                <el-table-column prop="path" label="组件路径" width="100" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="parentId" label="父菜单ID" width="130"></el-table-column>
                 <el-table-column prop="creatorId" label="创建者ID" width="130" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="status" label="菜单状态" width="130" show-overflow-tooltip>
                     <template #default="{ row }">
@@ -72,6 +73,9 @@
                 <el-form-item label="菜单名称" required>
                     <el-input v-model="editForm.title" placeholder="请输入菜单名称"></el-input>
                 </el-form-item>
+                <el-form-item label="组件路径">
+                    <el-input v-model="editForm.path" placeholder="请输入组件路径"></el-input>
+                </el-form-item>
                 <el-form-item label="父菜单ID" required>
                     <el-input v-model="editForm.parentId" placeholder="请输入父菜单ID"></el-input>
                 </el-form-item>
@@ -96,10 +100,13 @@
                 <el-form-item label="菜单名称" required>
                     <el-input v-model="addForm.title" placeholder="请输入菜单名称"></el-input>
                 </el-form-item>
+                <el-form-item label="组件路径" required>
+                    <el-input v-model="addForm.path" placeholder="请输入组件路径"></el-input>
+                </el-form-item>
                 <el-form-item label="父菜单ID" required>
                     <el-input v-model="addForm.parentId" placeholder="请输入父菜单ID"></el-input>
                 </el-form-item>
-                <el-form-item label="创建者ID">
+                <el-form-item label="创建者ID" required>
                     <el-input v-model="addForm.creatorId" placeholder="请输入创建者ID"></el-input>
                 </el-form-item>
                 <el-form-item label="菜单状态" required>
@@ -122,11 +129,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { deleteSelectUserList, addUserInBlack } from '@/api/modules/user'
 import { getMenuCopy, addMenuCopy, searchMenuCopy, editSelectMenuCopy, deleteSelectMenuCopy } from '@/api/modules/menuCopy.js'
 import Pagination from '@/components/utils/pagination/Pagination.vue'
-import { useRoute } from 'vue-router'
-const route = useRoute()
 const menuList = ref([]) // 定义用户列表，用于从后端获取到用户信息
 const pageSize = ref(10) // 定义每页显示的数量
 const total = ref(0) // 定义总共有多少条数据
@@ -140,6 +144,7 @@ const paginationForm = ref({
 const getAllMenu = () => {
     getMenuCopy(paginationForm.value).then(res => {
         if (res.code == 0) {
+            // console.log(res.data)
             menuList.value = res.data
             total.value = res.paginationVO.total
         } else {
@@ -260,6 +265,7 @@ const handleDelete = (row) => {
 const addDialogVisible = ref(false)
 const addForm = ref({
     title: '',
+    path:'',
     parentId: '',
     creatorId: '',
     status: ''
@@ -303,6 +309,7 @@ const editDialogVisible = ref(false)
 const editForm = ref({
     menuId:'',
     title: '',
+    path: '',
     parentId: 0,
     status: ''
 })
@@ -345,6 +352,7 @@ const handleEdit = (row) => {
     editForm.value = {
         menuId:row.menuId,
         title:row.title,
+        path:row.path,
         parentId:row.parentId,
         status:row.status === 1?"启用":"禁用"
     }

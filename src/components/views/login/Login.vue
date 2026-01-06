@@ -39,6 +39,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { useRouter } from 'vue-router';
 import { login } from '@/api/modules/user';
 import { ElMessage, ElMessageBox } from 'element-plus'
+import Cookies from 'js-cookie';
 
 const router = useRouter()
 const ruleFormRef = ref<FormInstance>()
@@ -87,6 +88,10 @@ const submitForm = (formEl: FormInstance | undefined) => {
             console.log(ruleForm)
             console.log('提交成功!')
             login(ruleForm).then(function (resp) {
+                Cookies.remove("admin")
+                Cookies.remove("user")
+                sessionStorage.clear()
+                localStorage.clear()
                 // console.log(ruleForm)  打印上传信息
                 console.log(resp) // 打印传回信息
                 if (resp.data == null) {
@@ -97,15 +102,17 @@ const submitForm = (formEl: FormInstance | undefined) => {
                     }
                 } else {
                     ElMessageBox.alert(resp.msg, '提示',) //登录成功
-                    if(resp.data.userTypeId == "1"){
-                        localStorage.setItem('LoginStatus', 'true')
-                        localStorage.setItem('startTime', nowTime.toString())
+                    if(resp.data.userTypeId == 1){
+                        Cookies.set('user', JSON.stringify(resp.data),{expires:1})
+                        Cookies.set('LoginStatus', 'true',{expires:1})
+                        Cookies.set('adminStartTime', nowTime.toString(),{expires:1})
                         router.push('/')
                     }
-                    if(resp.data.userTypeId == "0"){
-                        localStorage.setItem('adminLoginStatus', 'true')
-                        localStorage.setItem('adminStartTime', nowTime.toString())
-                        router.push('/adminHome/index')
+                    if(resp.data.userTypeId == 0){
+                        Cookies.set('admin',JSON.stringify(resp.data),{expires:1})
+                        Cookies.set('LoginStatus', 'true',{expires:1})
+                        Cookies.set('adminStartTime', nowTime.toString(),{expires:1})
+                        router.push('/adminHome/book/bookList')
                     }
                 }
             })

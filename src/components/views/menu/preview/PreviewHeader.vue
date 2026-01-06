@@ -2,7 +2,7 @@
     <div class="layout outcolor">
         <div class="head outcolor">
             <!-- 这里是logo和登录位置 -->
-            <div class="headrow">
+            <div class="headrow" style="transform: translateZ(0);">
                 <div class="headlogo">
                     <div class="headlogin">
                         <router-link to="/login" v-if="!loginStatus">
@@ -12,12 +12,12 @@
                             </el-icon>
                         </router-link>
                         <div v-if="loginStatus" class="haveLogin">
-                            <div>{{ loginShow }}</div>
+                            <div style="font-size: small;white-space: pre-wrap;">{{ loginShow }}</div>
                             <el-icon>
                                 <Avatar />
                             </el-icon>
                             <div class="smallWindow">
-                                <div><router-link
+                                <div><router-link to="/home/personalCenter"
                                         style="font-size: small;color:rgb(54, 153, 170);text-decoration: none;">个人中心</router-link>
                                 </div>
                                 <div><router-link to="/login" @click="quitLogin()"
@@ -34,18 +34,18 @@
                 <hr />
             </div>
             <!-- 这里是菜单栏-->
-            <div class="headrow ">
+            <div class="headrow">
                 <div class="menu">
                     <ul>
                         <li v-for="(menu, index) in menuList" :key="index" @mouseenter="menuDisplay = index"
                             @mouseleave="menuDisplay = null">
-                            <router-link to="#">{{ menu.title }}</router-link>
+                            <router-link :to="{ path: menu.path || '#' }">{{ menu.title }}</router-link>
                             <div class="submenu" v-if="menuDisplay === index && menu.children">
                                 <!-- 切成 3 栏 -->
                                 <div v-for="(col, i) in Math.ceil((menu.children?.length || 0) / 3)" :key="i"
                                     style="display: flex; flex-direction: column; gap: 15px;justify-content: center;gap: 30px;position: relative;">
                                     <div v-for="(child, j) in menu.children?.slice(i * 3, i * 3 + 3)" :key="j">
-                                        <router-link to="#"
+                                        <router-link :to="{ path: child.path || '#' }"
                                             style="color: rgb(54, 153, 170);font-size: large;text-decoration: none;">{{
                                                 child.title }}</router-link>
                                     </div>
