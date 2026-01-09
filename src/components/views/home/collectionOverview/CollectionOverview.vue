@@ -13,7 +13,7 @@
                 <div class="rightTitle">图书分类展示</div>
                 <div style="display: flex;flex-wrap: wrap;gap: 10px;">
                     <div style="margin: 20px;" v-for="(book, index) in data" :key="index">
-                        <el-card style="max-width: 360px;min-height: 270px;flex: 0 0 360px;">
+                        <el-card style="width: 360px;min-height: 270px;flex: 0 0 360px;">
                             <template #header>
                                 <h2>{{ book.title }}</h2>
                             </template>

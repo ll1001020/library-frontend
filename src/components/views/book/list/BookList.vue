@@ -80,11 +80,6 @@
 
         <!--这里是隐藏的编辑界面-->
         <el-dialog v-model="editDialogVisible" title="编辑书籍" width="50%">
-            <router-link to="/" style="text-decoration: none;color: red;">
-                <p class="dislog-footer" style="margin-left: 28px;margin-bottom: 10px;">
-                    点我为本书籍添加具体馆藏副本
-                </p>
-            </router-link>
             <el-form :model="editForm" label-width="100px">
                 <el-form-item label="书籍ID">
                     <el-input v-model="editForm.bookId" placeholder="请输入书籍ISBN" disabled></el-input>

@@ -267,7 +267,7 @@ import img5 from '@/assets/imgs/home/中华古籍智慧化服务平台.jpg'
 
 // 响应式数据
 const imgs = ref([img1, img2, img3, img4, img5])
-const chartRef = ref<HTMLElement>() // 图表容器引用
+const chartRef = ref<HTMLElement>() // 图表容器引用,将图表挂载到chartRef元素上
 
 
 

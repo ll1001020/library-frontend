@@ -13,7 +13,7 @@
 
         <!-- 搜索类型选择 -->
         <div style="flex-shrink: 0; margin-right: 10px;">
-          <el-select v-model="searchType" placeholder="选择类型" style="width: 120px; border: none;" :teleported="false">
+          <el-select v-model="searchType" placeholder="选择类型" style="width: 120px; border: none;" :teleported="true">
             <el-option label="书名" value="1" />
             <el-option label="ISBN" value="2" />
             <el-option label="作者" value="3" />
